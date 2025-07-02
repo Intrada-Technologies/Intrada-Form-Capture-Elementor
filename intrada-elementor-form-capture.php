@@ -4,7 +4,7 @@
  * Plugin Name:       Intrada Elementor Form Capture
  * Plugin URI:        --
  * Description:       Captures Elementor form submissions and sends them to a custom endpoint.
- * Version:           1.0.1
+ * Version:           1.0.2
  * Author:            Intrada Technologies
  * Author URI:        https://intradatech.com/
  * License:           MIT
