@@ -4,7 +4,7 @@
  * Plugin Name:       Intrada Elementor Form Capture
  * Plugin URI:        --
  * Description:       Captures Elementor form submissions and sends them to a custom endpoint.
- * Version:           1.0.0
+ * Version:           1.0.1
  * Author:            Intrada Technologies
  * Author URI:        https://intradatech.com/
  * License:           MIT
@@ -18,9 +18,22 @@ if (!defined('ABSPATH')) {
   exit;
 }
 
-function intrada_form_capture_init() {
+
+
+
+function intrada_form_capture_init()
+{
   $settings_file = plugin_dir_path(__FILE__) . 'includes/class-elementor-settings-integration.php';
   $capture_file  = plugin_dir_path(__FILE__) . 'includes/class-elementor-form-capture.php';
+  $updater_file  = plugin_dir_path(__FILE__) . 'includes/updater.php';
+
+  if (is_admin()) {
+    // Replace with your GitHub username and repository name
+    $github_username = 'Intrada-Technologies';
+    $github_repository = 'Intrada-Form-Capture-Elementor';
+
+    new Intrada_Plugin_Updater(__FILE__, $github_username, $github_repository);
+  }
 
   // Check if required files exist
   if (!file_exists($settings_file)) {
@@ -57,10 +70,11 @@ function intrada_form_capture_init() {
 add_action('plugins_loaded', 'intrada_form_capture_init');
 
 
-function add_settings_link( $links ) {
+function add_settings_link($links)
+{
   // https://dazzling-dhawan.192-64-126-71.plesk.page/wp-admin/admin.php?page=intrada-form-capture-settings
-  $settings_link = '<a href="admin.php?page=intrada-form-capture-settings">' . __( 'Settings', 'intrada-form-capture' ) . '</a>';
-  array_unshift( $links, $settings_link ); // Add the link to the beginning of the array
+  $settings_link = '<a href="admin.php?page=intrada-form-capture-settings">' . __('Settings', 'intrada-form-capture') . '</a>';
+  array_unshift($links, $settings_link); // Add the link to the beginning of the array
   return $links;
 }
-add_filter( 'plugin_action_links_' . plugin_basename( __FILE__ ), 'add_settings_link' );
+add_filter('plugin_action_links_' . plugin_basename(__FILE__), 'add_settings_link');
