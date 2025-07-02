@@ -11,8 +11,6 @@ jobs:
   release:
     name: Create Release
     runs-on: ubuntu-latest
-    permissions:
-      contents: write # This is the line that grants permission to create a release
 
     steps:
       - name: Checkout code
@@ -21,9 +19,7 @@ jobs:
       - name: Get Plugin Slug and Version
         id: plugin_meta
         run: |
-          # Extract the plugin slug from the main plugin file name
-          # Assumes your main plugin file is in the root and named like 'my-plugin.php'
-          PLUGIN_FILE=$(find . -maxdepth 1 -type f -name "*.php")
+          PLUGIN_FILE=$(find . -maxdepth 1 -type f -name "intrada-elementor-form-capture.php")
           if [ -z "$PLUGIN_FILE" ]; then
             echo "Error: Could not find the main plugin PHP file in the root directory."
             exit 1
@@ -31,7 +27,6 @@ jobs:
           PLUGIN_SLUG=$(basename ${PLUGIN_FILE} .php)
           echo "plugin_slug=${PLUGIN_SLUG}" >> $GITHUB_OUTPUT
 
-          # Get the current version from the plugin file header using a robust method
           PLUGIN_VERSION=$(grep -i 'Version:' ${PLUGIN_FILE} | sed -e 's/.*Version:[[:space:]]*//' | tr -d '\r')
           echo "plugin_version=${PLUGIN_VERSION}" >> $GITHUB_OUTPUT
           echo "Found plugin slug: ${PLUGIN_SLUG}"
@@ -54,7 +49,7 @@ jobs:
             }
             console.log(`Release with tag ${version} does not exist. Proceeding to create it.`);
             return true;
-
+        
       - name: Create Plugin ZIP
         if: steps.check_release.outputs.result == 'true'
         run: |
