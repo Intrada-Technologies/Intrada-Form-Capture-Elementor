@@ -1,11 +1,5 @@
 <?php
-/**
- * A class to handle checking for plugin updates from a private or public GitHub repository.
- *
- * @version 1.0.0
- * @author Pippin Williamson (modified for this use case)
- * @link https://github.com/pippinsplugins/GitHub-Plugin-Updater
- */
+
 
 if ( ! class_exists( 'Intrada_Plugin_Updater' ) ) {
 

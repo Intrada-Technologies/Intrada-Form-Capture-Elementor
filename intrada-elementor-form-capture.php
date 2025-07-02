@@ -32,7 +32,14 @@ function intrada_form_capture_init()
     $github_username = 'Intrada-Technologies';
     $github_repository = 'Intrada-Form-Capture-Elementor';
 
-    new Intrada_Plugin_Updater(__FILE__, $github_username, $github_repository);
+    // Include the updater class
+    if (file_exists($updater_file)) {
+      require_once $updater_file;
+      $updater = new Intrada_Plugin_Updater(__FILE__, $github_username, $github_repository);
+    } else {
+      error_log('Intrada Form Capture: Missing updater file.');
+    }
+    
   }
 
   // Check if required files exist
