@@ -1,0 +1,81 @@
+# GitHub Action for creating a new release for a WordPress plugin
+
+name: Release WordPress Plugin
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  release:
+    name: Create Release
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Get Plugin Slug and Version
+        id: plugin_meta
+        run: |
+          PLUGIN_FILE=$(find . -maxdepth 1 -type f -name "intrada-elementor-form-capture.php")
+          if [ -z "$PLUGIN_FILE" ]; then
+            echo "Error: Could not find the main plugin PHP file in the root directory."
+            exit 1
+          fi
+          PLUGIN_SLUG=$(basename ${PLUGIN_FILE} .php)
+          echo "plugin_slug=${PLUGIN_SLUG}" >> $GITHUB_OUTPUT
+
+          PLUGIN_VERSION=$(grep -i 'Version:' ${PLUGIN_FILE} | awk -F' ' '{print $2}' | tr -d '\r')
+          echo "plugin_version=${PLUGIN_VERSION}" >> $GITHUB_OUTPUT
+          echo "Found plugin slug: ${PLUGIN_SLUG}"
+          echo "Found plugin version: v${PLUGIN_VERSION}"
+
+      - name: Check if release for this version already exists
+        id: check_release
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const releases = await github.rest.repos.listReleases({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+            });
+            const version = "v${{ steps.plugin_meta.outputs.plugin_version }}";
+            const releaseExists = releases.data.some(release => release.tag_name === version);
+            if (releaseExists) {
+              console.log(`Release with tag ${version} already exists. Skipping new release.`);
+              return false;
+            }
+            console.log(`Release with tag ${version} does not exist. Proceeding to create it.`);
+            return true;
+        
+      - name: Create Plugin ZIP
+        if: steps.check_release.outputs.result == 'true'
+        run: |
+          # Create a zip file of the plugin, excluding unnecessary files
+          zip -r ${{ steps.plugin_meta.outputs.plugin_slug }}.zip . -x "*.git*" "*node_modules*" "*.github*" "*vendor*" "*composer.json*" "*composer.lock*" "*package.json*" "*package-lock.json*" "*README.md*"
+
+      - name: Create New Release
+        if: steps.check_release.outputs.result == 'true'
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: v${{ steps.plugin_meta.outputs.plugin_version }}
+          release_name: Release v${{ steps.plugin_meta.outputs.plugin_version }}
+          body: |
+            New release v${{ steps.plugin_meta.outputs.plugin_version }}. See commit history for details.
+          draft: false
+          prerelease: false
+
+      - name: Upload Release Asset
+        if: steps.check_release.outputs.result == 'true'
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create-release.outputs.upload_url }}
+          asset_path: ./${{ steps.plugin_meta.outputs.plugin_slug }}.zip
+          asset_name: ${{ steps.plugin_meta.outputs.plugin_slug }}.zip
+          asset_content_type: application/zip
