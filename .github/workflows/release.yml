@@ -11,6 +11,11 @@ jobs:
   release:
     name: Create Release
     runs-on: ubuntu-latest
+    
+    # This block is what you need to add.
+    # It gives the job permission to create a release.
+    permissions:
+      contents: write
 
     steps:
       - name: Checkout code
