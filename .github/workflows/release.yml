@@ -27,7 +27,7 @@ jobs:
           PLUGIN_SLUG=$(basename ${PLUGIN_FILE} .php)
           echo "plugin_slug=${PLUGIN_SLUG}" >> $GITHUB_OUTPUT
 
-          PLUGIN_VERSION=$(grep -i '^Version:' "${PLUGIN_FILE}" | sed -E 's/^[Vv]ersion:[[:space:]]*([0-9\.]+).*$/\1/')
+          PLUGIN_VERSION=$(grep -i '^Version:[[:space:]]*' "${PLUGIN_FILE}" | head -n1 | sed -E 's/^[Vv]ersion:[[:space:]]*([0-9]+\.[0-9]+\.[0-9]+).*$/\1/' | tr -d '\r\n')
           echo "plugin_version=${PLUGIN_VERSION}" >> $GITHUB_OUTPUT
           echo "Found plugin slug: ${PLUGIN_SLUG}"
           echo "Found plugin version: v${PLUGIN_VERSION}"
