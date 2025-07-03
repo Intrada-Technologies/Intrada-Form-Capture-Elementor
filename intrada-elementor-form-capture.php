@@ -18,29 +18,29 @@ if (!defined('ABSPATH')) {
   exit;
 }
 
-
+/**
+ * Load plugin text domain for translations
+ */
+function intrada_form_capture_load_textdomain()
+{
+  load_plugin_textdomain('intrada-form-capture', false, dirname(plugin_basename(__FILE__)) . '/languages');
+}
+add_action('init', 'intrada_form_capture_load_textdomain');
 
 
 function intrada_form_capture_init()
 {
   $settings_file = plugin_dir_path(__FILE__) . 'includes/class-elementor-settings-integration.php';
   $capture_file  = plugin_dir_path(__FILE__) . 'includes/class-elementor-form-capture.php';
-  $updater_file  = plugin_dir_path(__FILE__) . 'includes/updater.php';
+  $update_file   = plugin_dir_path(__FILE__) . 'includes/update.php';
 
-  if (is_admin()) {
-    // Replace with your GitHub username and repository name
-    $github_username = 'Intrada-Technologies';
-    $github_repository = 'Intrada-Form-Capture-Elementor';
-
-    // Include the updater class
-    if (file_exists($updater_file)) {
-      require_once $updater_file;
-      $updater = new Intrada_Plugin_Updater(__FILE__, $github_username, $github_repository);
-    } else {
-      error_log('Intrada Form Capture: Missing updater file.');
-    }
-    
+  if (file_exists($update_file)) {
+    require_once $update_file;
+    new intrada_form_capture_plugin_update();
+  } else {
+    error_log('Intrada Form Capture: Missing update file.');
   }
+
 
   // Check if required files exist
   if (!file_exists($settings_file)) {
@@ -74,14 +74,24 @@ function intrada_form_capture_init()
     error_log('Intrada Form Capture: Exception - ' . $e->getMessage());
   }
 }
-add_action('plugins_loaded', 'intrada_form_capture_init');
+add_action('init', 'intrada_form_capture_init');
 
 
-function add_settings_link($links)
+/**
+ * Add settings link to plugin action links
+ */
+function intrada_form_capture_add_settings_link($links)
 {
-  // https://dazzling-dhawan.192-64-126-71.plesk.page/wp-admin/admin.php?page=intrada-form-capture-settings
   $settings_link = '<a href="admin.php?page=intrada-form-capture-settings">' . __('Settings', 'intrada-form-capture') . '</a>';
-  array_unshift($links, $settings_link); // Add the link to the beginning of the array
+  array_unshift($links, $settings_link);
   return $links;
 }
-add_filter('plugin_action_links_' . plugin_basename(__FILE__), 'add_settings_link');
+
+/**
+ * Initialize plugin action links after text domain is loaded
+ */
+function intrada_form_capture_init_admin()
+{
+  add_filter('plugin_action_links_' . plugin_basename(__FILE__), 'intrada_form_capture_add_settings_link');
+}
+add_action('init', 'intrada_form_capture_init_admin');
