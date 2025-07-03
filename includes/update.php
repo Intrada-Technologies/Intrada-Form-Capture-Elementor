@@ -9,10 +9,10 @@ class intrada_form_capture_plugin_update
 
   public function plugin_info($res, $action, $args)
   {
-    if ($action !== 'plugin_information' || $args->slug !== 'intrada-elementor-form-capture') {
+    if ($action !== 'plugin_information') {
       return $res;
     }
-    if (plugin_basename(__DIR__) !== $args->slug) {
+    if ($args->slug !== 'intrada-elementor-form-capture') {
       return $res;
     }
 
