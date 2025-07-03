@@ -58,7 +58,7 @@ class intrada_form_capture_plugin_update
     }
 
 
-    $remote = wp_remote_get('https://raw.githubusercontent.com/Intrada-Technologies/Intrada-Form-Capture-Elementor/main/info.json', array(
+    $remote = wp_remote_get('https://raw.githubusercontent.com/Intrada-Technologies/Intrada-Form-Capture-Elementor/refs/heads/main/info.json', array(
       'timeout' => 10,
       'headers' => array(
         'Accept' => 'application/json'
