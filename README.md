@@ -39,6 +39,11 @@ This plugin uses GitHub Actions to automatically create releases when code is me
 
 To trigger a new release, simply update the version number in `intrada-elementor-form-capture.php` and merge to main.
 
+
+## Updates
+
+This plugin knows to check github for udpates - this requires the info.json to be updated when you update the plugin.
+
 ## License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
