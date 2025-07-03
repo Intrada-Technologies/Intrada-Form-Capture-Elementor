@@ -1,0 +1,21 @@
+{
+  "name": "Intrada Elementor Form Capture",
+  "slug": "intrada-elementor-form-capture",
+  "author": "<a href='https://intradatech.com'>Intrada Technologies</a>",
+  "author_profile": "https://www.intradatech.com/about-intrada",
+  "version": "1.0.3",
+  "download_url": "https://github.com/Intrada-Technologies/Intrada-Form-Capture-Elementor/releases/latest/download/intrada-elementor-form-capture.zip",
+  "requires": "5.0",
+  "tested": "6.8.1",
+  "requires_php": "8.0",
+  "last_updated": "2025-07-03 2:30:00",
+  "sections": {
+    "description": "Captures Elementor form submissions and sends them to a custom endpoint",
+    "installation": "Activate the plugin through the 'Plugins' menu in WordPress. Setup the webhook URL, site id, site secret, and api in the plugin settings. ",
+    "changelog": "<h4>1.0.3 – Initial Release</h4>"
+  },
+  "banners": {
+    "low": "https://www.intradatech.com/uploads/Intrada_Technologies_5198ead2c9.png?format=webp",
+    "high": "https://www.intradatech.com/uploads/Intrada_Technologies_5198ead2c9.png?format=webp"
+  }
+}
