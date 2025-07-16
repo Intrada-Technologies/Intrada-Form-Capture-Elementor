@@ -4,13 +4,14 @@
  * Plugin Name:       Intrada Elementor Form Capture
  * Plugin URI:        https://github.com/Intrada-Technologies/Intrada-Form-Capture-Elementor/
  * Description:       Captures Elementor form submissions and sends them to a custom endpoint.
- * Version:           1.0.8
+ * Version:           1.0.9
  * Author:            Intrada Technologies
  * Author URI:        https://intradatech.com/
  * License:           MIT
  * License URI:       https://opensource.org/licenses/MIT
  * Text Domain:       intrada-form-capture
  * Requires Plugins:  elementor-pro
+ * Update URI:		    https://raw.githubusercontent.com/Intrada-Technologies/Intrada-Form-Capture-Elementor/refs/heads/main/info.json
  */
 
 // Exit if accessed directly
@@ -77,21 +78,83 @@ function intrada_form_capture_init()
 add_action('init', 'intrada_form_capture_init');
 
 
+// /**
+//  * Add settings link to plugin action links
+//  */
+// function intrada_form_capture_add_settings_link($links)
+// {
+//   $settings_link = '<a href="admin.php?page=intrada-form-capture-settings">' . __('Settings', 'intrada-form-capture') . '</a>';
+//   array_unshift($links, $settings_link);
+//   return $links;
+// }
+
+// /**
+//  * Initialize plugin action links after text domain is loaded
+//  */
+// function intrada_form_capture_init_admin()
+// {
+//   add_filter('plugin_action_links_' . plugin_basename(__FILE__), 'intrada_form_capture_add_settings_link');
+// }
+// add_action('init', 'intrada_form_capture_init_admin');
+
+
+
 /**
- * Add settings link to plugin action links
+ * Add custom links to the plugin row on the plugins page.
  */
-function intrada_form_capture_add_settings_link($links)
+function intrada_elementor_add_plugin_links()
 {
-  $settings_link = '<a href="admin.php?page=intrada-form-capture-settings">' . __('Settings', 'intrada-form-capture') . '</a>';
+  $plugin_basename = plugin_basename(__FILE__);
+
+  // Add "Settings" link to the main action links
+  add_filter('plugin_action_links_' . $plugin_basename, 'intrada_elementor_add_settings_action_link');
+
+  // Add "View details" link to the meta links
+  add_filter('plugin_row_meta', 'intrada_elementor_add_details_meta_link', 10, 2);
+}
+add_action('admin_init', 'intrada_elementor_add_plugin_links');
+
+
+
+/**
+ * Adds the "Settings" link.
+ */
+function intrada_elementor_add_settings_action_link($links)
+{
+  $settings_link = sprintf(
+    '<a href="admin.php?page=intrada-elementor-form-capture-settings">%s</a>',
+    esc_html__('Settings', 'intrada-elementor-form-capture')
+  );
   array_unshift($links, $settings_link);
   return $links;
 }
 
 /**
- * Initialize plugin action links after text domain is loaded
+ * Adds the "View details" link.
  */
-function intrada_form_capture_init_admin()
+function intrada_elementor_add_details_meta_link($links, $file)
 {
-  add_filter('plugin_action_links_' . plugin_basename(__FILE__), 'intrada_form_capture_add_settings_link');
+  // Ensure this is your plugin
+  if (plugin_basename(__FILE__) === $file) {
+    // Use your Text Domain for the slug
+    $plugin_slug = 'intrada-elementor-form-capture';
+    $details_url = add_query_arg(
+      [
+        'tab'       => 'plugin-information',
+        'plugin'    => $plugin_slug,
+        'TB_iframe' => 'true',
+        'width'     => '772',
+        'height'    => '550',
+      ],
+      admin_url('plugin-install.php')
+    );
+
+    $links[] = sprintf(
+      '<a href="%s" class="thickbox" title="%s">%s</a>',
+      esc_url($details_url),
+      esc_attr__('More information about the Intrada Elementor Form Capture plugin', 'intrada-elementor-form-capture'),
+      esc_html__('View details', 'intrada-elementor-form-capture')
+    );
+  }
+  return $links;
 }
-add_action('init', 'intrada_form_capture_init_admin');
